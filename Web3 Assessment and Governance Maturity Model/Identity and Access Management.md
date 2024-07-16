@@ -28,7 +28,7 @@
 
 **Control Criteria**
 
-- [ ]  You can verify authenticity of identifies within your workflows
+- [ ]  You can verify authenticity of identities within your workflows
 - **Level 1:** Is there a basic form of identity proofing, possibly relying on community reputation or existing trust networks?
 - **Level 2:** Are there more structured identity verification processes that balance the need for some form of reliable identification with the respect for pseudonymity?
 - **Level 3:** Is there a comprehensive identity verification system that effectively manages risk while accommodating the decentralized, pseudonymous nature of the community?
