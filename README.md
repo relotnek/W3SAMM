@@ -1,4 +1,4 @@
-# Web3 Assessment and Governance Maturity Model for Security (WAGMMS)
+# Web3 SAMM
 
 **Boundaries and Purpose**
 This maturity model is intended to be used to measure projects and organizations operating in the web3 or decentralized web space. It is intended to be used as a self-assessment for organizations as well as an authoritative baseline to externally measure organizations or projects. There is no regulatory body determining interpretation of each of the core functions, but it may be expanded on and firmed up by an organization to be used as an authoritative measure.
