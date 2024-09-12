@@ -44,7 +44,7 @@
 
 **Control Criteria**
 
-- [ ]  You have a set of policies available fro review
+- [ ]  You have a set of policies available for review
 - [ ]  You have reviewed these processes at some point after their creation
 
 ### 1. Policy Review Process
