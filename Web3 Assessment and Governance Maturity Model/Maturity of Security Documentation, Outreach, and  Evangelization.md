@@ -58,7 +58,7 @@
 
 **Control Criteria**
 
-- [ ]  Training materials have been updated at leaset once
+- [ ]  Training materials have been updated at least once
 - **Level 1:** Is there a process to periodically update training materials and resources?
 - **Level 2:** Are training and educational resources regularly reviewed and updated with the latest security knowledge and practices?
 - **Level 3:** Is there a sophisticated, adaptive learning ecosystem for developers, integrating the latest security advancements and feedback for continuous improvement?
