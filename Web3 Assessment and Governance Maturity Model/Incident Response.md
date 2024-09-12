@@ -17,7 +17,7 @@
 
 **Control Criteria**
 
-- [ ]  Incident response plans or activities are not limited to one team or just the security tea
+- [ ]  Incident response plans or activities are not limited to one team or just the security team
 - [ ]  An incident response roster has been defined
 - **Level 1:** Is there a basic level of coordination among different teams during incident response, especially in a decentralized setting?
 - **Level 2:** Are coordination efforts more structured, with clear roles and communication channels established across distributed teams?
