@@ -2,7 +2,7 @@
 
 ### Application Security: Decentralized Application Security
 
-### 1. Security Best Practices for DApps
+### 1. Security Best Practices for Decentralized Applications
 
 **Control Criteria**
 
@@ -17,8 +17,8 @@
 
 **Control Criteria**
 
-- [ ]  Contracts are reviewed for security in some way
-- [ ]  Audits have been conducted or are planned for the contracts associated with the project or team
+- [ ]  Smart contracts are reviewed for security in some way
+- [ ]  Audits have been conducted or are planned for the smart contracts associated with the project or team
 - [ ]  There is internal knowledge of smart contract security and best practices
 - **Level 1:** Is basic security in place for smart contracts, such as using known patterns and simple audits?
 - **Level 2:** Are smart contract security measures more rigorous, including thorough audits, formal verification, and vulnerability scanning?
@@ -30,8 +30,8 @@
 
 **Control Criteria**
 
-- [ ]  Code reviews are conducted for third party components
-- [ ]  There is an inventory of third party components available
+- [ ]  Code reviews are conducted for third-party components
+- [ ]  There is an inventory of third-party components available
 - **Level 1:** Are there basic procedures in place for the review of third-party code, focusing on major known vulnerabilities?
 - **Level 2:** Are review procedures more comprehensive, regularly updated, and include systematic checks for a broader range of security issues?
 - **Level 3:** Is there a highly advanced code review process, integrating automated tools, continuous integration checks, and peer review systems?
@@ -40,7 +40,7 @@
 
 **Control Criteria**
 
-- [ ]  There is engagement with the community to peer review third party code
+- [ ]  There is engagement with the community to peer review third-party code
 - [ ]  There are published issues or vulnerabilities for the third party
 - **Level 1:** Is there an initial engagement with the community for code review on an ad-hoc basis?
 - **Level 2:** Are community-based reviews more structured and regularly solicited, with clear guidelines and incentives for community participation such as a bug bounty program?
