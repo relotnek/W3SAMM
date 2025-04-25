@@ -4,15 +4,19 @@
 
 ### 1. Asset Cataloging
 
+Assets are an important part of any organization or project. The aim for asset cataloging is for projects and organizations to clearly understand what it is they are trying to protect. These assets can include software, private keys, laptops, infrastructure assets, or even simply nodes or components a team or organization is responsible for. Level 3 can be especially difficult to reach when asset control is distributed and requires a level of coordianation with ecosystem teams
+
 **Control Criteria**
 
-- [ ]  There is a basic understanding of business assets
+- [ ]  There is a basic understanding of business and project assets
 - [ ]  There is some mechanism of tracking at least one of these business assets
 - **Level 1:** Is there a basic process in place to catalog digital assets, identifying key assets within the organization?
 - **Level 2:** Are cataloging processes more refined, with comprehensive documentation of digital assets, including those in decentralized environments?
 - **Level 3:** Is there an advanced, automated system for asset cataloging, continuously updated and integrated with other asset management systems?
 
 ### 2. Asset Classification
+
+Expanding on identification of assets, this subcomponent encourages teams to focus on how to prioritize assets within their scope. This does not have to be a traditional classification method. This may even be a separation of centralized and decentralized assets. The classification system used is not defined as part of the model.
 
 **Control Criteria**
 

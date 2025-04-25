@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web3 Security Maturity Model</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .pillar-card {
+            transition: all 0.3s ease;
+        }
+        .pillar-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .practice-item {
+            transition: all 0.2s ease;
+        }
+        .practice-item:hover {
+            background-color: #f8fafc;
+        }
+        .level-btn {
+            transition: all 0.2s ease;
+        }
+        .level-btn:hover {
+            transform: scale(1.05);
+        }
+        .progress-bar {
+            transition: width 0.6s ease;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-12 text-center">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Web3 Security Maturity Model</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Assess and improve your organization's Web3 security posture across key pillars and practices
+            </p>
+        </header>
+
+        <!-- Dashboard Overview -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8 fade-in">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-semibold text-gray-800">Maturity Assessment Dashboard</h2>
+                    <p class="text-gray-600">Track your progress across all security pillars</p>
+                </div>
+                <div class="mt-4 md:mt-0">
+                    <button id="reset-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg mr-2 transition">
+                        <i class="fas fa-redo mr-2"></i>Reset Assessment
+                    </button>
+                    <button id="export-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+                        <i class="fas fa-file-export mr-2"></i>Export Results
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="bg-indigo-50 p-4 rounded-lg">
+                    <p class="text-sm text-indigo-600 font-medium">Overall Maturity</p>
+                    <h3 class="text-3xl font-bold text-indigo-800" id="overall-score">0%</h3>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                        <div id="overall-progress" class="bg-indigo-600 h-2.5 rounded-full progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <p class="text-sm text-green-600 font-medium">Completed Practices</p>
+                    <h3 class="text-3xl font-bold text-green-800" id="completed-count">0</h3>
+                    <p class="text-sm text-green-600">out of 30</p>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                    <p class="text-sm text-yellow-600 font-medium">In Progress</p>
+                    <h3 class="text-3xl font-bold text-yellow-800" id="inprogress-count">0</h3>
+                    <p class="text-sm text-yellow-600">needs attention</p>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <p class="text-sm text-purple-600 font-medium">Recommendations</p>
+                    <h3 class="text-3xl font-bold text-purple-800" id="recommendations-count">0</h3>
+                    <p class="text-sm text-purple-600">priority actions</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pillars Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Pillar cards will be dynamically inserted here -->
+        </div>
+
+        <!-- Detailed View Modal -->
+        <div id="practice-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 id="modal-pillar" class="text-xl font-semibold text-gray-800"></h3>
+                            <h2 id="modal-practice" class="text-2xl font-bold text-blue-600"></h2>
+                        </div>
+                        <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times text-2xl"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Description</h4>
+                            <p id="modal-description" class="text-gray-600"></p>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-700 mb-2">Current Status</h4>
+                            <div id="modal-status" class="inline-block px-3 py-1 rounded-full text-sm font-medium"></div>
+                            <div class="mt-4">
+                                <h4 class="font-medium text-gray-700 mb-2">Select Maturity Level</h4>
+                                <div class="flex space-x-2">
+                                    <button data-level="0" class="level-btn bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 py-1 rounded">Not Started</button>
+                                    <button data-level="1" class="level-btn bg-blue-100 hover:bg-blue-200 text-blue-800 px-3 py-1 rounded">Initial</button>
+                                    <button data-level="2" class="level-btn bg-green-100 hover:bg-green-200 text-green-800 px-3 py-1 rounded">Defined</button>
+                                    <button data-level="3" class="level-btn bg-purple-100 hover:bg-purple-200 text-purple-800 px-3 py-1 rounded">Managed</button>
+                                    <button data-level="4" class="level-btn bg-indigo-100 hover:bg-indigo-200 text-indigo-800 px-3 py-1 rounded">Optimized</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-medium text-gray-700 mb-2">Maturity Level Definitions</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-2 text-sm">
+                            <div class="bg-gray-100 p-2 rounded">
+                                <p class="font-medium text-gray-800">0 - Not Started</p>
+                                <p class="text-gray-600">No formal process exists</p>
+                            </div>
+                            <div class="bg-blue-50 p-2 rounded">
+                                <p class="font-medium text-blue-800">1 - Initial</p>
+                                <p class="text-blue-600">Ad hoc and reactive approach</p>
+                            </div>
+                            <div class="bg-green-50 p-2 rounded">
+                                <p class="font-medium text-green-800">2 - Defined</p>
+                                <p class="text-green-600">Processes documented and repeatable</p>
+                            </div>
+                            <div class="bg-purple-50 p-2 rounded">
+                                <p class="font-medium text-purple-800">3 - Managed</p>
+                                <p class="text-purple-600">Measured and controlled</p>
+                            </div>
+                            <div class="bg-indigo-50 p-2 rounded">
+                                <p class="font-medium text-indigo-800">4 - Optimized</p>
+                                <p class="text-indigo-600">Continuous improvement</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-medium text-gray-700 mb-2">Recommendations & Notes</h4>
+                        <textarea id="practice-notes" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="4" placeholder="Add your notes or action items here..."></textarea>
+                        <button id="save-practice" class="mt-3 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+                            <i class="fas fa-save mr-2"></i>Save Assessment
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Summary -->
+        <div id="results-summary" class="bg-white rounded-xl shadow-md p-6 mt-8 hidden fade-in">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Assessment Summary</h2>
+            
+            <div class="mb-6">
+                <h3 class="text-lg font-medium text-gray-700 mb-2">Maturity Distribution</h3>
+                <div class="grid grid-cols-5 gap-2 mb-2">
+                    <div class="text-center">
+                        <div class="h-4 bg-gray-200 rounded-t-sm"></div>
+                        <p class="text-xs mt-1">Not Started</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="h-4 bg-blue-100 rounded-t-sm"></div>
+                        <p class="text-xs mt-1">Initial</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="h-4 bg-green-100 rounded-t-sm"></div>
+                        <p class="text-xs mt-1">Defined</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="h-4 bg-purple-100 rounded-t-sm"></div>
+                        <p class="text-xs mt-1">Managed</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="h-4 bg-indigo-100 rounded-t-sm"></div>
+                        <p class="text-xs mt-1">Optimized</p>
+                    </div>
+                </div>
+                <div id="maturity-bars" class="h-8 flex rounded-sm overflow-hidden">
+                    <!-- Dynamic bars will be inserted here -->
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-medium text-gray-700 mb-2">Top Strengths</h3>
+                    <div id="strengths-list" class="space-y-2">
+                        <!-- Dynamic content will be inserted here -->
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium text-gray-700 mb-2">Improvement Areas</h3>
+                    <div id="improvements-list" class="space-y-2">
+                        <!-- Dynamic content will be inserted here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6">
+                <h3 class="text-lg font-medium text-gray-700 mb-2">Action Plan</h3>
+                <div id="action-items" class="space-y-3">
+                    <!-- Dynamic content will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data model
+        const maturityData = [
+            {
+                pillar: "Leadership and Organizational Principles",
+                practices: [
+                    {
+                        name: "Vision and Security Culture",
+                        streams: [
+                            { name: "Culture Building", level: 0, goal: 0, description: "Establishing a security-first culture within the organization that values and prioritizes Web3 security at all levels." },
+                            { name: "Vision Communication", level: 0, goal: 0, description: "Clearly communicating the security vision and strategy to all stakeholders, ensuring alignment across the organization." }
+                        ]
+                    },
+                    {
+                        name: "Organizational Structure for Web3 Security",
+                        streams: [
+                            { name: "Structure Adaptation", level: 0, goal: 0, description: "Adapting organizational structure to effectively address Web3 security challenges with clear accountability." },
+                            { name: "Role and Responsibility Clarity", level: 0, goal: 0, description: "Defining clear roles and responsibilities for Web3 security across the organization." }
+                        ]
+                    },
+                    {
+                        name: "Performance Metrics and Continuous Improvement",
+                        streams: [
+                            { name: "Metric Development and Tracking", level: 0, goal: 0, description: "Developing and tracking key performance indicators for Web3 security initiatives." },
+                            { name: "Improvement Initiatives", level: 0, goal: 0, description: "Implementing continuous improvement processes based on security metrics and feedback." }
+                        ]
+                    }
+                ]
+            },
+            {
+                pillar: "Relevant Policies and Maturity Levels",
+                practices: [
+                    {
+                        name: "Decentralization Governance",
+                        streams: [
+                            { name: "Policy Creation and Enforcement", level: 0, goal: 0, description: "Creating and enforcing policies that govern decentralized operations and decision-making." },
+                            { name: "Community Involvement", level: 0, goal: 0, description: "Engaging the community in governance processes to ensure decentralized security policies." }
+                        ]
+                    },
+                    {
+                        name: "Compliance and Legal Frameworks",
+                        streams: [
+                            { name: "Regulatory Alignment", level: 0, goal: 0, description: "Aligning Web3 security practices with relevant regulations and compliance requirements." },
+                            { name: "Legal Risk Assessment", level: 0, goal: 0, description: "Regularly assessing legal risks associated with Web3 operations and mitigating them." }
+                        ]
+                    },
+                    {
+                        name: "Policy Maturity Assessment",
+                        streams: [
+                            { name: "Policy Review Process", level: 0, goal: 0, description: "Establishing a regular review process for security policies to ensure they remain effective." },
+                            { name: "Adaptation to Emerging Threats", level: 0, goal: 0, description: "Adapting policies to address new and emerging threats in the Web3 ecosystem." }
+                        ]
+                    }
+                ]
+            },
+            {
+                pillar: "Risk Management",
+                practices: [
+                    {
+                        name: "Risk Assessment and Prioritization",
+                        streams: [
+                            { name: "Risk Identification", level: 0, goal: 0, description: "Systematically identifying risks specific to Web3 technologies and operations." },
+                            { name: "Risk Prioritization", level: 0, goal: 0, description: "Prioritizing identified risks based on potential impact and likelihood." }
+                        ]
+                    },
+                    {
+                        name: "Risk Mitigation and Management",
+                        streams: [
+                            { name: "Mitigation Strategies", level: 0, goal: 0, description: "Developing and implementing strategies to mitigate identified Web3 security risks." },
+                            { name: "Continuous Risk Monitoring", level: 0, goal: 0, description: "Continuously monitoring risks and adjusting mitigation strategies as needed." }
+                        ]
+                    }
+                ]
+            },
+            {
+                pillar: "Identity and Access Management",
+                practices: [
+                    {
+                        name: "Access Control Mechanisms",
+                        streams: [
+                            { name: "User Authentication and Authorization", level: 0, goal: 0, description: "Implementing robust authentication and authorization mechanisms for Web3 systems." },
+                            { name: "Privilege Management", level: 0, goal: 0, description: "Managing and regularly reviewing privileged access to critical Web3 systems." }
+                        ]
+                    },
+                    {
+                        name: "Identity Verification and Management",
+                        streams: [
+                            { name: "Identity Proofing and Verification", level: 0, goal: 0, description: "Implementing identity verification processes appropriate for Web3 applications." },
+                            { name: "Identity Lifecycle Management", level: 0, goal: 0, description: "Managing the full lifecycle of digital identities in Web3 systems." }
+                        ]
+                    }
+                ]
+            },
+            {
+                pillar: "Asset Management",
+                practices: [
+                    {
+                        name: "Digital Asset Identification",
+                        streams: [
+                            { name: "Asset Cataloging", level: 0, goal: 0, description: "Maintaining a comprehensive catalog of all digital assets in the Web3 ecosystem." },
+                            { name: "Asset Classification", level: 0, goal: 0, description: "Classifying digital assets based on sensitivity and importance to the organization." }
+                        ]
+                    },
+                    {
+                        name: "Asset Lifecycle Management",
+                        streams: [
+                            { name: "Lifecycle Process Definition", level: 0, goal: 0, description: "Defining processes for managing digital assets throughout their lifecycle." },
+                            { name: "Lifecycle Compliance Monitoring", level: 0, goal: 0, description: "Monitoring compliance with asset lifecycle management processes." }
+                        ]
+                    }
+                ]
+            },
+            {
+                pillar: "Data Protection Practices",
+                practices: [
+                    {
+                        name: "Data Privacy Compliance",
+                        streams: [
+                            { name: "Compliance with Privacy Laws", level: 0, goal: 0, description: "Ensuring compliance with relevant data privacy laws and regulations." },
+                            { name: "Data Minimization and Retention", level: 0, goal: 0, description: "Implementing data minimization and appropriate retention policies." }
+                        ]
+                    },
+                    {
+                        name: "Data Security and Encryption",
+                        streams: [
+                            { name: "Implementation of Encryption", level: 0, goal: 0, description: "Implementing appropriate encryption for sensitive data in Web3 systems." },
+                            { name: "Access Control to Sensitive Data", level: 0, goal: 0, description: "Controlling access to sensitive data in Web3 applications." }
+                        ]
+                    }
+                ]
+            },
+            {
+                pillar: "Software Security",
+                practices: [
+                    {
+                        name: "Decentralized Application Security",
+                        streams: [
+                            { name: "Security Best Practices for DApps", level: 0, goal: 0, description: "Implementing security best practices in decentralized application development." },
+                            { name: "Smart Contract Security", level: 0, goal: 0, description: "Ensuring security in smart contract development and deployment." }
+                        ]
+                    },
+                    {
+                        name: "Third-party Code Review",
+                        streams: [
+                            { name: "Review Procedures", level: 0, goal: 0, description: "Establishing procedures for reviewing third-party code used in Web3 projects." },
+                            { name: "Community-Based Reviews", level: 0, goal: 0, description: "Leveraging community expertise for security reviews of Web3 code." }
+                        ]
+                    },
+                    {
+                        name: "Security in Project Stewardship",
+                        streams: [
+                            { name: "Advisory Standards", level: 0, goal: 0, description: "Setting security standards for projects under the organization's stewardship." },
+                            { name: "Feedback and Improvement Loop", level: 0, goal: 0, description: "Establishing feedback mechanisms to continuously improve security practices." }
+                        ]
+                    }
+                ]
+            },
+            {
+                pillar: "Maturity of Security Documentation, Outreach, and Developer Training",
+                practices: [
+                    {
+                        name: "Documentation Standards and Accessibility",
+                        streams: [
+                            { name: "Development of Documentation", level: 0, goal: 0, description: "Developing comprehensive security documentation for Web3 projects." },
+                            { name: "Accessibility and Clarity", level: 0, goal: 0, description: "Ensuring security documentation is accessible and clear to all stakeholders." }
+                        ]
+                    },
+                    {
+                        name: "Community Engagement and Outreach",
+                        streams: [
+                            { name: "Community Engagement Initiatives", level: 0, goal: 0, description: "Engaging with the community to promote security awareness and best practices." },
+                            { name: "Public Security Awareness", level: 0, goal: 0, description: "Raising public awareness about Web3 security issues and solutions." }
+                        ]
+                    },
+                    {
+                        name: "Developer Security Education",
+                        streams: [
+                            { name: "Educational Resources and Training", level: 0, goal: 0, description: "Providing educational resources and training for developers on Web3 security." },
+                            { name: "Continuous Learning and Update", level: 0, goal: 0, description: "Ensuring continuous learning and updating of security knowledge for developers." }
+                        ]
+                    }
+                ]
+            },
+            {
+                pillar: "Incident Response",
+                practices: [
+                    {
+                        name: "Decentralized Incident Management",
+                        streams: [
+                            { name: "Incident Handling Procedures", level: 0, goal: 0, description: "Establishing procedures for handling security incidents in decentralized systems." },
+                            { name: "Cross-Team Coordination", level: 0, goal: 0, description: "Coordinating incident response across different teams and stakeholders." }
+                        ]
+                    },
+                    {
+                        name: "Incident Reporting and Transparency",
+                        streams: [
+                            { name: "Reporting Mechanisms", level: 0, goal: 0, description: "Implementing mechanisms for reporting security incidents." },
+                            { name: "Community Communication", level: 0, goal: 0, description: "Communicating about incidents with the community transparently and responsibly." }
+                        ]
+                    },
+                    {
+                        name: "Post-Incident Analysis",
+                        streams: [
+                            { name: "Analysis and Lessons Learned", level: 0, goal: 0, description: "Conducting thorough analysis of incidents to extract lessons learned." },
+                            { name: "Feedback Integration", level: 0, goal: 0, description: "Integrating feedback from incident analysis into security improvements." }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // DOM elements
+        const pillarsGrid = document.querySelector('.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3');
+        const practiceModal = document.getElementById('practice-modal');
+        const closeModalBtn = document.getElementById('close-modal');
+        const savePracticeBtn = document.getElementById('save-practice');
+        const resetBtn = document.getElementById('reset-btn');
+        const exportBtn = document.getElementById('export-btn');
+        const resultsSummary = document.getElementById('results-summary');
+        const overallScore = document.getElementById('overall-score');
+        const overallProgress = document.getElementById('overall-progress');
+        const completedCount = document.getElementById('completed-count');
+        const inprogressCount = document.getElementById('inprogress-count');
+        const recommendationsCount = document.getElementById('recommendations-count');
+        const maturityBars = document.getElementById('maturity-bars');
+        const strengthsList = document.getElementById('strengths-list');
+        const improvementsList = document.getElementById('improvements-list');
+        const actionItems = document.getElementById('action-items');
+
+        // Current practice being edited
+        let currentPractice = null;
+        let currentStreamIndex = null;
+        let currentPillarIndex = null;
+        let currentPracticeIndex = null;
+
+        // Initialize the app
+        function init() {
+            renderPillarCards();
+            loadFromLocalStorage();
+            updateDashboard();
+            
+            // Event listeners
+            closeModalBtn.addEventListener('click', closeModal);
+            savePracticeBtn.addEventListener('click', savePractice);
+            resetBtn.addEventListener('click', resetAssessment);
+            exportBtn.addEventListener('click', exportResults);
+            
+            // Close modal when clicking outside
+            practiceModal.addEventListener('click', (e) => {
+                if (e.target === practiceModal) {
+                    closeModal();
+                }
+            });
+        }
+
+        // Render pillar cards
+        function renderPillarCards() {
+            pillarsGrid.innerHTML = '';
+            
+            maturityData.forEach((pillar, pillarIndex) => {
+                const pillarScore = calculatePillarScore(pillar);
+                const progressPercentage = (pillarScore / 4) * 100;
+                
+                const card = document.createElement('div');
+                card.className = 'pillar-card bg-white rounded-xl shadow-md overflow-hidden';
+                card.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="text-xl font-bold text-gray-800">${pillar.pillar}</h3>
+                            <div class="text-right">
+                                <span class="text-2xl font-bold ${getScoreColorClass(pillarScore)}">${pillarScore.toFixed(1)}</span>
+                                <span class="text-gray-500">/4</span>
+                            </div>
+                        </div>
+                        
+                        <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+                            <div class="h-2 rounded-full ${getProgressColorClass(progressPercentage)}" style="width: ${progressPercentage}%"></div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            ${pillar.practices.map((practice, practiceIndex) => `
+                                <div class="practice-item cursor-pointer p-3 border border-gray-200 rounded-lg" 
+                                     data-pillar="${pillarIndex}" 
+                                     data-practice="${practiceIndex}">
+                                    <div class="flex justify-between items-center">
+                                        <h4 class="font-medium text-gray-700">${practice.name}</h4>
+                                        <span class="text-sm ${getPracticeStatusClass(practice)} px-2 py-1 rounded-full">
+                                            ${getPracticeStatusText(practice)}
+                                        </span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                pillarsGrid.appendChild(card);
+            });
+            
+            // Add event listeners to practice items
+            document.querySelectorAll('.practice-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const pillarIndex = parseInt(this.getAttribute('data-pillar'));
+                    const practiceIndex = parseInt(this.getAttribute('data-practice'));
+                    openPracticeModal(pillarIndex, practiceIndex);
+                });
+            });
+        }
+
+        // Calculate pillar score
+        function calculatePillarScore(pillar) {
+            let total = 0;
+            let count = 0;
+            
+            pillar.practices.forEach(practice => {
+                practice.streams.forEach(stream => {
+                    total += stream.level;
+                    count++;
+                });
+            });
+            
+            return count > 0 ? total / count : 0;
+        }
+
+        // Get score color class
+        function getScoreColorClass(score) {
+            if (score >= 3) return 'text-green-600';
+            if (score >= 2) return 'text-blue-600';
+            if (score >= 1) return 'text-yellow-600';
+            return 'text-gray-600';
+        }
+
+        // Get progress color class
+        function getProgressColorClass(percentage) {
+            if (percentage >= 75) return 'bg-green-500';
+            if (percentage >= 50) return 'bg-blue-500';
+            if (percentage >= 25) return 'bg-yellow-500';
+            return 'bg-gray-500';
+        }
+
+        // Get practice status class
+        function getPracticeStatusClass(practice) {
+            const avgLevel = practice.streams.reduce((sum, stream) => sum + stream.level, 0) / practice.streams.length;
+            
+            if (avgLevel >= 3) return 'bg-green-100 text-green-800';
+            if (avgLevel >= 2) return 'bg-blue-100 text-blue-800';
+            if (avgLevel >= 1) return 'bg-yellow-100 text-yellow-800';
+            return 'bg-gray-100 text-gray-800';
+        }
+
+        // Get practice status text
+        function getPracticeStatusText(practice) {
+            const avgLevel = practice.streams.reduce((sum, stream) => sum + stream.level, 0) / practice.streams.length;
+            
+            if (avgLevel >= 3) return 'Advanced';
+            if (avgLevel >= 2) return 'Established';
+            if (avgLevel >= 1) return 'Initial';
+            return 'Not Started';
+        }
+
+        // Open practice modal
+        function openPracticeModal(pillarIndex, practiceIndex) {
+            currentPillarIndex = pillarIndex;
+            currentPracticeIndex = practiceIndex;
+            currentPractice = maturityData[pillarIndex].practices[practiceIndex];
+            
+            // Set modal content
+            document.getElementById('modal-pillar').textContent = maturityData[pillarIndex].pillar;
+            document.getElementById('modal-practice').textContent = currentPractice.name;
+            
+            // Create tabs for streams
+            const streamsContainer = document.createElement('div');
+            streamsContainer.className = 'mb-6 border-b border-gray-200';
+            
+            const tabsNav = document.createElement('div');
+            tabsNav.className = 'flex flex-wrap -mb-px';
+            
+            const tabsContent = document.createElement('div');
+            tabsContent.className = 'py-4';
+            
+            currentPractice.streams.forEach((stream, index) => {
+                // Create tab button
+                const tabBtn = document.createElement('button');
+                tabBtn.className = `inline-block px-4 py-2 border-b-2 font-medium text-sm ${index === 0 ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-600 hover:border-gray-300'}`;
+                tabBtn.textContent = stream.name;
+                tabBtn.addEventListener('click', () => switchStreamTab(index));
+                
+                tabsNav.appendChild(tabBtn);
+                
+                // Create tab content
+                const tabContent = document.createElement('div');
+                tabContent.className = `stream-content ${index === 0 ? 'block' : 'hidden'}`;
+                tabContent.innerHTML = `
+                    <p class="text-gray-600 mb-4">${stream.description}</p>
+                    <div class="flex items-center mb-4">
+                        <span class="font-medium text-gray-700 mr-3">Current Level:</span>
+                        <span class="px-3 py-1 rounded-full text-sm font-medium ${getLevelBadgeClass(stream.level)}">
+                            ${getLevelText(stream.level)}
+                        </span>
+                    </div>
+                `;
+                
+                tabsContent.appendChild(tabContent);
+            });
+            
+            streamsContainer.appendChild(tabsNav);
+            streamsContainer.appendChild(tabsContent);
+            
+            // Replace existing content
+            const descriptionContainer = document.getElementById('modal-description');
+            descriptionContainer.innerHTML = '';
+            descriptionContainer.appendChild(streamsContainer);
+            
+            // Set initial stream
+            currentStreamIndex = 0;
+            updateLevelButtons(currentPractice.streams[0].level);
+            
+            // Show modal
+            practiceModal.classList.remove('hidden');
+        }
+
+        // Switch stream tab
+        function switchStreamTab(index) {
+            // Update tab buttons
+            const tabButtons = document.querySelectorAll('.flex.-mb-px button');
+            tabButtons.forEach((btn, i) => {
+                if (i === index) {
+                    btn.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-600', 'hover:border-gray-300');
+                    btn.classList.add('border-blue-500', 'text-blue-600');
+                } else {
+                    btn.classList.remove('border-blue-500', 'text-blue-600');
+                    btn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-600', 'hover:border-gray-300');
+                }
+            });
+            
+            // Update tab content
+            const tabContents = document.querySelectorAll('.stream-content');
+            tabContents.forEach((content, i) => {
+                content.classList.toggle('hidden', i !== index);
+            });
+            
+            // Update current stream
+            currentStreamIndex = index;
+            updateLevelButtons(currentPractice.streams[index].level);
+        }
+
+        // Get level badge class
+        function getLevelBadgeClass(level) {
+            switch(level) {
+                case 0: return 'bg-gray-100 text-gray-800';
+                case 1: return 'bg-blue-100 text-blue-800';
+                case 2: return 'bg-green-100 text-green-800';
+                case 3: return 'bg-purple-100 text-purple-800';
+                case 4: return 'bg-indigo-100 text-indigo-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        // Get level text
+        function getLevelText(level) {
+            switch(level) {
+                case 0: return 'Not Started';
+                case 1: return 'Initial';
+                case 2: return 'Defined';
+                case 3: return 'Managed';
+                case 4: return 'Optimized';
+                default: return 'Not Started';
+            }
+        }
+
+        // Update level buttons
+        function updateLevelButtons(level) {
+            const levelButtons = document.querySelectorAll('.level-btn');
+            levelButtons.forEach(btn => {
+                const btnLevel = parseInt(btn.getAttribute('data-level'));
+                if (btnLevel === level) {
+                    // Highlight the selected level
+                    btn.classList.remove('bg-gray-200', 'bg-blue-100', 'bg-green-100', 'bg-purple-100', 'bg-indigo-100');
+                    btn.classList.remove('hover:bg-gray-300', 'hover:bg-blue-200', 'hover:bg-green-200', 'hover:bg-purple-200', 'hover:bg-indigo-200');
+                    
+                    switch(level) {
+                        case 0: 
+                            btn.classList.add('bg-gray-300', 'hover:bg-gray-400');
+                            break;
+                        case 1: 
+                            btn.classList.add('bg-blue-200', 'hover:bg-blue-300');
+                            break;
+                        case 2: 
+                            btn.classList.add('bg-green-200', 'hover:bg-green-300');
+                            break;
+                        case 3: 
+                            btn.classList.add('bg-purple-200', 'hover:bg-purple-300');
+                            break;
+                        case 4: 
+                            btn.classList.add('bg-indigo-200', 'hover:bg-indigo-300');
+                            break;
+                    }
+                } else {
+                    // Reset other buttons
+                    btn.classList.remove('bg-gray-300', 'bg-blue-200', 'bg-green-200', 'bg-purple-200', 'bg-indigo-200');
+                    btn.classList.remove('hover:bg-gray-400', 'hover:bg-blue-300', 'hover:bg-green-300', 'hover:bg-purple-300', 'hover:bg-indigo-300');
+                    
+                    switch(btnLevel) {
+                        case 0: 
+                            btn.classList.add('bg-gray-200', 'hover:bg-gray-300');
+                            break;
+                        case 1: 
+                            btn.classList.add('bg-blue-100', 'hover:bg-blue-200');
+                            break;
+                        case 2: 
+                            btn.classList.add('bg-green-100', 'hover:bg-green-200');
+                            break;
+                        case 3: 
+                            btn.classList.add('bg-purple-100', 'hover:bg-purple-200');
+                            break;
+                        case 4: 
+                            btn.classList.add('bg-indigo-100', 'hover:bg-indigo-200');
+                            break;
+                    }
+                }
+            });
+            
+            // Add click event to level buttons
+            levelButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const newLevel = parseInt(btn.getAttribute('data-level'));
+                    currentPractice.streams[currentStreamIndex].level = newLevel;
+                    updateLevelButtons(newLevel);
+                    
+                    // Update the displayed level in the modal
+                    const currentTabContent = document.querySelectorAll('.stream-content')[currentStreamIndex];
+                    const levelBadge = currentTabContent.querySelector('.rounded-full');
+                    levelBadge.className = `px-3 py-1 rounded-full text-sm font-medium ${getLevelBadgeClass(newLevel)}`;
+                    levelBadge.textContent = getLevelText(newLevel);
+                });
+            });
+        }
+
+        // Close modal
+        function closeModal() {
+            practiceModal.classList.add('hidden');
+        }
+
+        // Save practice
+        function savePractice() {
+            // Save notes if any
+            const notes = document.getElementById('practice-notes').value;
+            if (notes) {
+                currentPractice.streams[currentStreamIndex].notes = notes;
+            }
+            
+            // Update UI
+            renderPillarCards();
+            updateDashboard();
+            showResultsSummary();
+            closeModal();
+            
+            // Save to localStorage
+            saveToLocalStorage();
+        }
+
+        // Update dashboard metrics
+        function updateDashboard() {
+            let totalLevel = 0;
+            let totalItems = 0;
+            let completed = 0;
+            let inProgress = 0;
+            let recommendations = 0;
+            
+            maturityData.forEach(pillar => {
+                pillar.practices.forEach(practice => {
+                    practice.streams.forEach(stream => {
+                        totalLevel += stream.level;
+                        totalItems++;
+                        
+                        if (stream.level >= 3) completed++;
+                        else if (stream.level >= 1) inProgress++;
+                        
+                        if (stream.level < 2) recommendations++;
+                    });
+                });
+            });
+            
+            const avgScore = totalItems > 0 ? (totalLevel / (totalItems * 4)) * 100 : 0;
+            
+            overallScore.textContent = `${avgScore.toFixed(1)}%`;
+            overallProgress.style.width = `${avgScore}%`;
+            completedCount.textContent = completed;
+            inprogressCount.textContent = inProgress;
+            recommendationsCount.textContent = recommendations;
+        }
+
+        // Show results summary
+        function showResultsSummary() {
+            resultsSummary.classList.remove('hidden');
+            
+            // Calculate maturity distribution
+            const distribution = [0, 0, 0, 0, 0]; // 0-4 levels
+            const strengths = [];
+            const improvements = [];
+            const actions = [];
+            
+            maturityData.forEach(pillar => {
+                pillar.practices.forEach(practice => {
+                    practice.streams.forEach(stream => {
+                        distribution[stream.level]++;
+                        
+                        if (stream.level >= 3) {
+                            strengths.push({
+                                name: `${practice.name} - ${stream.name}`,
+                                level: stream.level
+                            });
+                        } else if (stream.level <= 1) {
+                            improvements.push({
+                                name: `${practice.name} - ${stream.name}`,
+                                level: stream.level
+                            });
+                            
+                            actions.push({
+                                name: `${practice.name} - ${stream.name}`,
+                                current: stream.level,
+                                target: stream.level + 1
+                            });
+                        }
+                    });
+                });
+            });
+            
+            // Render maturity distribution bars
+            maturityBars.innerHTML = '';
+            const total = distribution.reduce((sum, val) => sum + val, 0);
+            
+            distribution.forEach((count, level) => {
+                if (count === 0) return;
+                
+                const percentage = (count / total) * 100;
+                const bar = document.createElement('div');
+                bar.className = `h-8 ${getDistributionColorClass(level)}`;
+                bar.style.width = `${percentage}%`;
+                bar.setAttribute('title', `${count} items at level ${level}`);
+                maturityBars.appendChild(bar);
+            });
+            
+            // Render strengths
+            strengthsList.innerHTML = '';
+            strengths.slice(0, 5).forEach(strength => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center';
+                item.innerHTML = `
+                    <span class="w-6 h-6 rounded-full ${getLevelBadgeClass(strength.level)} flex items-center justify-center mr-2">
+                        <i class="fas fa-check text-xs"></i>
+                    </span>
+                    <span>${strength.name}</span>
+                `;
+                strengthsList.appendChild(item);
+            });
+            
+            if (strengths.length === 0) {
+                strengthsList.innerHTML = '<p class="text-gray-500">No advanced practices yet. Focus on improving key areas first.</p>';
+            }
+            
+            // Render improvements
+            improvementsList.innerHTML = '';
+            improvements.slice(0, 5).forEach(improvement => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center';
+                item.innerHTML = `
+                    <span class="w-6 h-6 rounded-full ${getLevelBadgeClass(improvement.level)} flex items-center justify-center mr-2">
+                        <i class="fas fa-exclamation text-xs"></i>
+                    </span>
+                    <span>${improvement.name}</span>
+                `;
+                improvementsList.appendChild(item);
+            });
+            
+            if (improvements.length === 0) {
+                improvementsList.innerHTML = '<p class="text-gray-500">All practices are at least at initial level. Great job!</p>';
+            }
+            
+            // Render action items
+            actionItems.innerHTML = '';
+            actions.slice(0, 5).forEach(action => {
+                const item = document.createElement('div');
+                item.className = 'flex items-start p-3 bg-gray-50 rounded-lg';
+                item.innerHTML = `
+                    <div class="flex-shrink-0 mt-1">
+                        <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center mr-2">
+                            <i class="fas fa-arrow-up text-xs"></i>
+                        </span>
+                    </div>
+                    <div class="flex-grow">
+                        <p class="font-medium">${action.name}</p>
+                        <p class="text-sm text-gray-600">Improve from ${getLevelText(action.current)} to ${getLevelText(action.target)}</p>
+                    </div>
+                `;
+                actionItems.appendChild(item);
+            });
+            
+            if (actions.length === 0) {
+                actionItems.innerHTML = '<p class="text-gray-500">No critical improvement actions needed at this time.</p>';
+            }
+        }
+
+        // Get distribution color class
+        function getDistributionColorClass(level) {
+            switch(level) {
+                case 0: return 'bg-gray-300';
+                case 1: return 'bg-blue-300';
+                case 2: return 'bg-green-300';
+                case 3: return 'bg-purple-300';
+                case 4: return 'bg-indigo-300';
+                default: return 'bg-gray-300';
+            }
+        }
+
+        // Reset assessment
+        function resetAssessment() {
+            if (confirm('Are you sure you want to reset all assessment data? This cannot be undone.')) {
+                maturityData.forEach(pillar => {
+                    pillar.practices.forEach(practice => {
+                        practice.streams.forEach(stream => {
+                            stream.level = 0;
+                            if (stream.notes) delete stream.notes;
+                        });
+                    });
+                });
+                
+                renderPillarCards();
+                updateDashboard();
+                resultsSummary.classList.add('hidden');
+                
+                // Clear localStorage
+                localStorage.removeItem('web3MaturityAssessment');
+            }
+        }
+
+        // Export results
+        function exportResults() {
+            // Simple export to JSON for demonstration
+            const data = {
+                timestamp: new Date().toISOString(),
+                assessment: maturityData,
+                summary: {
+                    overallScore: document.getElementById('overall-score').textContent,
+                    completedCount: document.getElementById('completed-count').textContent,
+                    inprogressCount: document.getElementById('inprogress-count').textContent,
+                    recommendationsCount: document.getElementById('recommendations-count').textContent
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `web3-maturity-assessment-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Save to localStorage
+        function saveToLocalStorage() {
+            localStorage.setItem('web3MaturityAssessment', JSON.stringify(maturityData));
+        }
+
+        // Load from localStorage
+        function loadFromLocalStorage() {
+            const savedData = localStorage.getItem('web3MaturityAssessment');
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                
+                // Merge saved data with our structure
+                parsedData.forEach((savedPillar, pillarIndex) => {
+                    savedPillar.practices.forEach((savedPractice, practiceIndex) => {
+                        savedPractice.streams.forEach((savedStream, streamIndex) => {
+                            if (maturityData[pillarIndex] && 
+                                maturityData[pillarIndex].practices[practiceIndex] &&
+                                maturityData[pillarIndex].practices[practiceIndex].streams[streamIndex]) {
+                                
+                                maturityData[pillarIndex].practices[practiceIndex].streams[streamIndex].level = savedStream.level;
+                                if (savedStream.notes) {
+                                    maturityData[pillarIndex].practices[practiceIndex].streams[streamIndex].notes = savedStream.notes;
+                                }
+                            }
+                        });
+                    });
+                });
+                
+                renderPillarCards();
+                updateDashboard();
+            }
+        }
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
